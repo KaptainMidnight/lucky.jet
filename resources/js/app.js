@@ -1,13 +1,14 @@
-import {defineConfig} from "vite";
-import laravel from "laravel-vite-plugin";
-import vue from "@vitejs/plugin-vue";
+import {createApp, h} from 'vue'
+import {createInertiaApp} from '@inertiajs/vue3'
 
-export default defineConfig({
-    plugins: [
-        vue(),
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
-        })
-    ]
+createInertiaApp({
+    resolve: name => {
+        const pages = import.meta.glob('./pages/**/*.vue', {eager: true})
+        return pages[`./pages/${name}.vue`]
+    },
+    setup({el, App, props, plugin}) {
+        createApp({render: () => h(App, props)})
+            .use(plugin)
+            .mount(el)
+    },
 })
